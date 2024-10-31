@@ -15,7 +15,7 @@
   ╚═════╝  ╚═════╝ ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝╚═╝     ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝
                                                                                   
 ```
-### 🚀 Get your Cloud Run application up and running in the Google Cloud in record time! 🚀
+### 🚀 Deploy your Cloud Run application to the Google Cloud in record time! 🚀
 
 <details>
 <summary><strong>TL;DR (Too Long; Didn't Read) 😴🥱💤</strong></summary>
