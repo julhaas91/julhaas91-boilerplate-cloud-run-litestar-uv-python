@@ -1,0 +1,27 @@
+name: "🔐 Load ENV Variables"
+description: "Load environment variables from 'config.env' file"
+author: "Julius Haas <juliushaas91@gmail.de>"
+
+inputs:
+  env-file:
+    description: "Path to the config.env file"
+    required: false
+    default: "config.env"
+
+runs:
+  using: "composite"
+  steps:
+    - name: 📥 Import environment variables
+      shell: bash
+      run: |
+        echo "Importing environment variables."
+        if [ -f "${{ inputs.env-file }}" ]; then
+          while IFS= read -r line || [[ -n "$line" ]]; do
+            if [[ ! "$line" =~ ^[[:space:]]*# && -n "$line" ]]; then
+              echo "$line" >> $GITHUB_ENV
+            fi
+          done < "${{ inputs.env-file }}"
+          echo "Environment variables loaded successfully from ${{ inputs.env-file }}"
+        else
+          echo "Warning: ${{ inputs.env-file }} not found. No environment variables loaded."
+        fi

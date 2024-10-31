@@ -1,0 +1,12 @@
+name: "🚀 Deploy to Google Cloud"
+description: "Build and deploy the application as a Cloud Run service in Google Cloud"
+author: "Julius Haas <juliushaas91@gmail.de>"
+
+runs:
+  using: "composite"
+  steps:
+      - name: "🐳 Build Docker Image, 📤 Push Image to Artifact Registry, ⚙️Deploy Image to Cloud Run"
+        shell: bash
+        run: |
+          ./Taskfile.sh deploy
+          

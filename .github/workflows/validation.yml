@@ -1,0 +1,28 @@
+name: "🚦Validation (Linting, Formatting, Testing)"
+# author: "Julius Haas <juliushaas91@gmail.de>"
+
+on:
+  push:
+    branches-ignore:
+      - 'main'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    concurrency: release
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: "🔄 Checkout Repository"
+        uses: actions/checkout@v4
+
+      - name: "📦 Setup Project Environment"
+        uses: ./.github/actions/setup-project-environment
+
+      - name: "🚦Validate Code"
+        uses: ./.github/actions/lint-format-test-code

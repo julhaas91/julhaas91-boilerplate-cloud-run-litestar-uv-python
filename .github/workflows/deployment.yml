@@ -1,0 +1,45 @@
+name: "🚀  Google Cloud Deployment"
+# author: "Julius Haas <juliushaas91@gmail.de>"
+
+on:
+  workflow_dispatch:
+
+# NOTE: uncomment for auto-deployment on 'main' branch pushes
+#  push:
+#    branches:
+#      - main
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read  # This is required for actions/checkout
+  actions: write # This is required for styfle/cancel-workflow-action
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    concurrency: release
+
+    steps:
+      - name: "🔄 Checkout Repository"
+        uses: actions/checkout@v4
+
+      - name: "📦 Setup Project Environment"
+        uses: ./.github/actions/setup-project-environment
+
+      - name: "🚦Validate Code"
+        uses: ./.github/actions/lint-format-test-code
+
+      - name: "🔐 Load ENV variables"
+        uses: ./.github/actions/load-env-variables
+        with:
+          env-file: './config.env'
+
+      - name: "🔑 Google Cloud Authentication"
+        uses: google-github-actions/auth@v2
+        with:
+          create_credentials_file: True
+          workload_identity_provider: ${{ env.WIF_PROVIDER }}
+          service_account: ${{ env.AUTOMATION_SERVICE_ACCOUNT }}
+
+      - name: "🚀 Deploy to Google Cloud"
+        uses: ./.github/actions/deploy-to-gcloud

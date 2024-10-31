@@ -1,0 +1,74 @@
+name: "🔔 Release"
+# author: "Julius Haas <juliushaas91@gmail.de>"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  check-branch:
+    name: "🔍 Check current branch"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "🚫 Terminate if workflow is not running on 'main'"
+        if: github.ref != 'refs/heads/main'
+        run: |
+          echo "Releases are only supported from the main branch. Stopping execution."
+          exit 1
+
+# TODO: implement tag-based or commit-message-based release triggers
+#  check-commit:
+#    name: Check commit message
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: "🔍 Check for [trigger] in commit message"
+#        run: |
+#          echo "Commit message: ${{ github.event.head_commit.message }}"
+#          if [[ "${{ github.event.head_commit.message }}" == *"[trigger]"* ]]; then
+#            echo "TRIGGER_RELEASE=true" >> $GITHUB_ENV
+#          else
+#            echo "TRIGGER_RELEASE=false" >> $GITHUB_ENV
+#          fi
+#      - name: "🚫 Terminate if workflow is not running on 'main'"
+#        if: github.ref != 'refs/heads/main' || env.TRIGGER_RELEASE == 'false'
+#        run: |
+#          echo "Releases are only supported from the main branch. Stopping execution."
+#          exit 1
+
+  release:
+    name: "🔔 Run Release"
+    runs-on: ubuntu-latest
+    needs: check-branch
+    concurrency: release
+
+    permissions:
+      id-token: write
+      contents: write
+      actions: write
+
+    steps:
+      - name: "🔄 Checkout Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: "📦 Setup Project Environment"
+        uses: ./.github/actions/setup-project-environment
+
+      - name: "🚦Validate Code"
+        uses: ./.github/actions/lint-format-test-code
+
+      - name: "🔐 Load ENV variables"
+        uses: ./.github/actions/load-env-variables
+        with:
+          env-file: './config.env'
+
+      - name: "🔢 Run Semantic Release"
+        uses: python-semantic-release/python-semantic-release@v9.11.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          git_committer_name: ${{ env.GIT_COMMITTER_NAME }}
+          git_committer_email: ${{ env.GIT_COMMITTER_EMAIL }}
+
+# NOTE: uncomment this if you want to deploy a new version after the release automatically
+#      - name: "🚀 Deploy to Google Cloud"
+#        uses: ./.github/actions/deploy-to-gcloud

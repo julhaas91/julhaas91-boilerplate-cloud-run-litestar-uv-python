@@ -1,0 +1,23 @@
+name: "📦🔧 Set up Project Environment"
+description: "Checkout repository, set up uv for dependency management, configure Python, and install dependencies."
+author: "Julius Haas <juliushaas91@gmail.de>"
+inputs:
+  python-version-file:
+    description: "The file that specifies the Python version."
+    required: true
+    default: ".python-version"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "⚙️ Set Up Dependency Management"
+      uses: astral-sh/setup-uv@v3
+
+    - name: "🐍 Set Up Python"
+      uses: actions/setup-python@v4
+      with:
+        python-version-file: ${{ inputs.python-version-file }}
+
+    - name: "🛠 Install Python Dependencies"
+      shell: bash
+      run: uv sync --frozen --no-cache

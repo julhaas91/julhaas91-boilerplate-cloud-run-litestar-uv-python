@@ -1,0 +1,25 @@
+name: "🚦Lint, Format and Test Code"
+description: "Run linting, formatting, unit and integration tests"
+author: "Julius Haas <juliushaas91@gmail.de>"
+inputs:
+  python-version-file:
+    description: "The file that specifies the Python version."
+    required: true
+    default: ".python-version"
+  fetch-depth:
+    description: "The depth of the Git fetch (default: 0 for full history)."
+    required: false
+    default: "0"
+
+runs:
+  using: "composite"
+  steps:
+      - name: "🧹 Lint & Format Code"
+        # https://github.com/astral-sh/ruff-action
+        uses: astral-sh/ruff-action@v1 
+        with:
+          args: "check --fix"
+
+      - name: "✅ Test Code"
+        shell: bash
+        run: uv run python3 -m pytest test/test_*.py
