@@ -141,6 +141,19 @@ setup-gcloud() {
 
   echo "Workload-identity-provider ${WIF_PROVIDER_NAME} retrieved"
   echo "WIF_PROVIDER=\"${WIF_PROVIDER_NAME}\"" >> config.env
+
+      # Check if Docker repository exists in Artifact Registry
+  if ! gcloud artifacts repositories list --project="${GCP_PROJECT_ID}" --location="${SERVICE_REGION}" --format="value(name)" | grep -q "docker"; then
+    echo "Creating Docker repository in Artifact Registry"
+    gcloud artifacts repositories create docker \
+    --project="${GCP_PROJECT_ID}" \
+    --repository-format=docker \
+    --location="${SERVICE_REGION}" \
+    --description="Docker repository for ${REPO_NAME}"
+  else
+    echo "Docker repository 'docker' already exists in Artifact Registry"
+  fi
+  
   echo "SUCCESS: SETTING UP GOOGLE CLOUD INFRASTRUCTURE IS COMPLETE"
 }
 
