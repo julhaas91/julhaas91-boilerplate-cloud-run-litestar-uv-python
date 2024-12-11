@@ -24,6 +24,7 @@ Run the following commands to get started right away:
 ```bash
 ./Taskfile.sh setup-gcloud && ./Taskfile.sh setup-project && ./Taskfile.sh run-application
 ```
+(If you get a _permission denied_ error, run: `chmod +x ./Taskfile.sh`)
 
 </details>
 
@@ -88,7 +89,7 @@ To set up your local development environment:
 ./Taskfile.sh setup
 ```
 
-(If you get a _permission denied_ error, run: `chmod +x ./Taskfile.sh`) to set execute permissions.)
+(If you get a _permission denied_ error, run: `chmod +x ./Taskfile.sh`)
 
 ### Application Logic
 
