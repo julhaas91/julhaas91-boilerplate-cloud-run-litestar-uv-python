@@ -20,7 +20,8 @@
 <details>
 <summary><strong>TL;DR (Too Long; Didn't Read) 😴🥱💤</strong></summary>
 
-Run the following commands to get started right away:
+Set the necessary environment variables in `config.env` and run the following commands to get started right away:
+
 ```bash
 ./Taskfile.sh setup-gcloud && ./Taskfile.sh setup-project && ./Taskfile.sh run-application
 ```
