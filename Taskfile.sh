@@ -80,7 +80,7 @@ print_env_variables() {
 
 # Help function to display available tasks
 help() {
-  echo "Usage: ./Taskfile.sh [task]"
+  echo "Usage: ./taskfile.sh [task]"
   echo
   echo "Available tasks:"
   echo "  run                           Run the application locally."

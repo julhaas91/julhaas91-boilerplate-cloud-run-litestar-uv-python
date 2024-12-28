@@ -23,9 +23,9 @@
 Set the necessary environment variables in `config.env` and run the following commands to get started right away:
 
 ```bash
-./Taskfile.sh setup-gcloud && ./Taskfile.sh setup-project && ./Taskfile.sh run-application
+./taskfile.sh setup-gcloud && ./taskfile.sh setup-project && ./taskfile.sh run-application
 ```
-(If you get a _permission denied_ error, run: `chmod +x ./Taskfile.sh`)
+(If you get a _permission denied_ error, run: `chmod +x ./taskfile.sh`)
 
 </details>
 
@@ -87,14 +87,14 @@ Get started on building, not configuring! 💡
 To set up your local development environment:
 
 ```bash
-./Taskfile.sh setup
+./taskfile.sh setup-project
 ```
 
-(If you get a _permission denied_ error, run: `chmod +x ./Taskfile.sh`)
+(If you get a _permission denied_ error, run: `chmod +x ./taskfile.sh`)
 
 ### Application Logic
 
-- ➕ To install additional packages, run [`./Taskfile.sh install <package>`](Taskfile.sh)
+- ➕ To install additional packages, run [`./taskfile.sh install <package>`](taskfile.sh)
 - 🐍 To change the Python version, modify [`.python-version`](.python-version)  
 - 🌎 Update environment variables and critical settings (e.g., project, service accounts) in [`config.env.`](config.env.)
 - ⚙️ For project-specific configurations, edit [`pyproject.toml`](pyproject.toml)
@@ -106,7 +106,7 @@ To set up your local development environment:
 To validate the application, run: 
 
 ```bash
-./Taskfile.sh validate
+./taskfile.sh validate
 ```
 
 ### Test the application
@@ -114,7 +114,7 @@ To validate the application, run:
 To test the application, run: 
 
 ```bash
-./Taskfile.sh test
+./taskfile.sh test
 ```
 
 ## Google Cloud Authentication Prerequisites
@@ -126,7 +126,7 @@ To set up the authentication to Google Cloud, follow these steps:
 Authenticate your local environment using your user credentials:
 
 ```bash
-./Taskfile.sh authenticate
+./taskfile.sh authenticate
 ```
 
 ### GitHub Actions Authentication via Workload Identity Federation
@@ -141,7 +141,7 @@ Set up the authentication of GitHub Actions via Workload Identity Federation wit
 To automate these setup steps, run:
 
 ```bash
-./Taskfile.sh setup-gcloud
+./setup_gcp.sh setup
 ```
 
 ## Deployment
@@ -151,13 +151,13 @@ To automate these setup steps, run:
 1. 🧑‍🔧 **Authenticate:** Connect to Google Cloud. See [Authentication to Google Cloud](#authentication-to-google-cloud) for instructions:
 
 ```bash
-./Taskfile.sh authenticate
+./taskfile.sh authenticate
 ```
 
 2. ⬆️ **Deploy:** Build and push your Docker image to Google Container Registry, and deploy to Cloud Run:
 
 ```bash
-./Taskfile.sh deploy <GCP-PROJECT> <SERVICE-ACCOUNT>
+./taskfile.sh deploy <GCP-PROJECT> <SERVICE-ACCOUNT>
 ```
 
 ### Automated Deployment (CI/CD)
@@ -177,7 +177,7 @@ pull request and code review.
 Releases are managed via the [`.github/workflows/release.yml`](.github/workflows/release.yml) GitHub Actions workflow. A new release can be triggered manually via the GitHub UI `https://github.com/<account>/<repository>/actions`) or running:
 
 ```bash
-./Taskfile.sh release
+./taskfile.sh release
 ```
 
 This updates the version number, updates `./CHANGELOG.md`, pushes changes, and tags the commit. Local release triggers are **not** recommended.
@@ -214,7 +214,7 @@ This repository uses [Angular Commit Message Conventions][angular-commit-convent
 To run the application locally, execute:
 
 ```bash
-./Taskfile.sh
+./taskfile.sh
 ```
 
 ### Run the application in the Google Cloud
@@ -223,12 +223,12 @@ After successfully deploying to Cloud Run, you can send requests to the service 
 To authenticate your requests, include a [Bearer token](https://cloud.google.com/run/docs/authenticating/service-to-service#acquire-token) in the header of your REST requests. You can create a valid token by running:
 
 ```bash
-./Taskfile.sh create-identity-token
+./taskfile.sh create-identity-token
 ```
 
-(Remember to authenticate first using `./Taskfile.sh authenticate`)
+(Remember to authenticate first using `./taskfile.sh authenticate`)
 
-> Refer to [./Taskfile.sh](./Taskfile.sh) for additional tasks to assist in development.
+> Refer to [./taskfile.sh](./taskfile.sh) for additional tasks to assist in development.
 
 ### Example usage
 
