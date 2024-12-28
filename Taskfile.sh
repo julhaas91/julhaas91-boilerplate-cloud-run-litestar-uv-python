@@ -4,8 +4,7 @@ set -e
 # Load environment variables for Google Cloud configuration
 source config.env
 
-# //////////////////////////////////////////////////////////////////////////////
-# START tasks
+# Tasks
 
 run-application() {
   uv run litestar --app src.main:app run
@@ -27,7 +26,7 @@ test() {
 }
 
 validate() {
-  uv run ruff check --fix
+  uv run ruff check --fix --show-fixes
 }
 
 deploy() {
@@ -74,124 +73,12 @@ create-identity-token() {
   uv run gcloud auth print-identity-token
 }
 
-setup-gcloud() {
-  echo "--- SETTING UP GOOGLE CLOUD INFRASTRUCTURE ---"
-
-  # Check and create SERVICE SA ACCOUNT only if it doesn't exist
-  if ! gcloud iam service-accounts list \
-    --project="${GCP_PROJECT_ID}" \
-    --filter="email:${SA_CLOUD_RUN}@${GCP_PROJECT_ID}.iam.gserviceaccount.com" \
-    --format="value(email)" | grep -q "${SA_CLOUD_RUN}"; then
-    echo "Creating service account: ${SA_CLOUD_RUN}"
-    gcloud iam service-accounts create "${SA_CLOUD_RUN}" \
-      --project "${GCP_PROJECT_ID}" \
-      --quiet
-    echo "SA_CLOUD_RUN=\"${SA_CLOUD_RUN}\"" >> config.env
-  else
-    echo "Service account ${SA_CLOUD_RUN} already exists"
-  fi
-
-  # Check and create GITHUB AUTOMATION SA ACCOUNT only if it doesn't exist
-  if ! gcloud iam service-accounts list \
-    --project="${GCP_PROJECT_ID}" \
-    --filter="email:github-automation@${GCP_PROJECT_ID}.iam.gserviceaccount.com" \
-    --format="value(email)" | grep -q "github-automation"; then
-    echo "Creating service account: github-automation"
-    gcloud iam service-accounts create "github-automation" \
-      --project "${GCP_PROJECT_ID}" \
-      --quiet
-    echo "SA_GITHUB_AUTOMATION=\"github-automation\"" >> config.env
-  else
-    echo "Service account github-automation already exists"
-  fi
-
-  # Assign roles to the GitHub automation service account
-  echo "Assigning roles to the GitHub automation service account"
-  gcloud projects add-iam-policy-binding "${GCP_PROJECT_ID}" \
-    --member="serviceAccount:github-automation@${GCP_PROJECT_ID}.iam.gserviceaccount.com" \
-    --role="roles/run.admin" \
-    --quiet
-
-  gcloud projects add-iam-policy-binding "${GCP_PROJECT_ID}" \
-    --member="serviceAccount:github-automation@${GCP_PROJECT_ID}.iam.gserviceaccount.com" \
-    --role="roles/iam.serviceAccountUser" \
-    --quiet
-
-  gcloud projects add-iam-policy-binding "${GCP_PROJECT_ID}" \
-    --member="serviceAccount:github-automation@${GCP_PROJECT_ID}.iam.gserviceaccount.com" \
-    --role="roles/artifactregistry.writer" \
-    --quiet
-
-  # Command to add IAM policy binding
-  gcloud iam service-accounts add-iam-policy-binding \
-    "github-automation@${GCP_PROJECT_ID}.iam.gserviceaccount.com" \
-    --project="${GCP_PROJECT_ID}" \
-    --role="roles/iam.workloadIdentityUser" \
-    --member="principalSet://iam.googleapis.com/${WORKLOAD_IDENTITY_POOL}" \
-    --quiet
-
-  # Create WIF POOL only if it doesn't exist
-  if ! gcloud iam workload-identity-pools describe "deployer-pool" \
-      --project="${GCP_PROJECT_ID}" \
-      --location="global" \
-      --quiet 2>/dev/null; then
-      echo "Creating workload-identity-pool in project ${GCP_PROJECT_ID}"
-      gcloud iam workload-identity-pools create "deployer-pool" \
-        --project="${GCP_PROJECT_ID}" \
-        --location="global" \
-        --display-name="Deployer Pool" \
-        --quiet
-  else
-      echo "Workload identity pool 'deployer-pool' already exists"
-  fi
-
-  # Fetch WIF Pool Name
-  WIF_POOL_NAME=$(gcloud iam workload-identity-pools describe "deployer-pool" \
-    --project="${GCP_PROJECT_ID}" \
-    --location="global" \
-    --format="value(name)")
-
-# Create Workload Identity PROVIDER only if it doesn't exist
-  if ! gcloud iam workload-identity-pools providers list \
-    --project="${GCP_PROJECT_ID}" \
-    --location="global" \
-    --workload-identity-pool="deployer-pool" \
-    --format="value(name)" | grep -q "github"; then
-    echo "Creating GitHub workload identity provider"
-    gcloud iam workload-identity-pools providers create-oidc "github" \
-      --project="${GCP_PROJECT_ID}" \
-      --location="global" \
-      --workload-identity-pool="deployer-pool" \
-      --issuer-uri="https://token.actions.githubusercontent.com" \
-      --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository" \
-      --attribute-condition="assertion.repository_owner == '${GITHUB_ORG}'" \
-      --quiet
-  else
-    echo "GitHub workload identity provider already exists"
-  fi
-
-  # Create Docker repository in Artifact Registry if it doesn't exist
-  if ! gcloud artifacts repositories list \
-    --project="${GCP_PROJECT_ID}" \
-    --location="${SERVICE_REGION}" \
-    --format="value(name)" | grep -q "docker"; then
-    echo "Creating Docker repository in Artifact Registry"
-    gcloud artifacts repositories create docker \
-      --project="${GCP_PROJECT_ID}" \
-      --repository-format=docker \
-      --location="${SERVICE_REGION}" \
-      --description="Docker repository for ${REPO_NAME}" \
-      --quiet
-  else
-    echo "Docker repository 'docker' already exists in Artifact Registry"
-  fi
-
-  echo "SUCCESS: SETTING UP GOOGLE CLOUD INFRASTRUCTURE IS COMPLETE"
+print_env_variables() {
+  echo "Printing all environment variables:"
+  printenv
 }
 
-# END tasks
-# //////////////////////////////////////////////////////////////////////////////
-
+# Help function to display available tasks
 help() {
   echo "Usage: ./Taskfile.sh [task]"
   echo
