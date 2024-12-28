@@ -1,9 +1,42 @@
 # CHANGELOG
 
 
+## v0.2.0 (2024-12-28)
+
+### Bug Fixes
+
+- Validation workflow trigger with every commit
+  ([`3ac8519`](https://github.com/julhaas91/boilerplate-cloud-run-python/commit/3ac8519429215069c58f56812155770c1ed50d09))
+
+- Add missing policy bindings for service account impersonation
+  ([`ea465a9`](https://github.com/julhaas91/boilerplate-cloud-run-python/commit/ea465a9db419880f18263fb00458b93e5c3170ef))
+
+### Chores
+
+- Minor changes
+  ([`dc425f9`](https://github.com/julhaas91/boilerplate-cloud-run-python/commit/dc425f957e88238e7736ff767dcd94643b5f7ba9))
+
+- Minor change in README
+  ([`785fdeb`](https://github.com/julhaas91/boilerplate-cloud-run-python/commit/785fdeb558dbe05c01a0e427e0d5ab44feff0d92))
+
+- Added chmod +x comment
+  ([`a64f2c8`](https://github.com/julhaas91/boilerplate-cloud-run-python/commit/a64f2c8f3bd74adc829be97d189e892b17c29c38))
+
+### Features
+
+- Refactored Taskfile.sh & moved GCP WIF functions to "setup_gcp.sh"
+  ([`0a5e0e4`](https://github.com/julhaas91/boilerplate-cloud-run-python/commit/0a5e0e47a6b05d604138fe20c179bf487958941d))
+
+- Added artifact registry docker creation to setup-gcloud
+  ([`4550096`](https://github.com/julhaas91/boilerplate-cloud-run-python/commit/455009651b2689e8abe01557102a0fcfe7e02cad))
+
+
 ## v0.1.0 (2024-12-11)
 
 ### Chores
+
+- **release**: 0.1.0
+  ([`0787c3b`](https://github.com/julhaas91/boilerplate-cloud-run-python/commit/0787c3b1462b7686aa0c22e710fe01559b37e65a))
 
 - **deps**: Bump python-semantic-release/python-semantic-release
   ([`0b3217d`](https://github.com/julhaas91/boilerplate-cloud-run-python/commit/0b3217d4b480a14913d1a7480c362a84ddd6b087))
